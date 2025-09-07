@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>WHO ICD API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        label { display: block; margin-top: 15px; }
+        input, select { padding: 5px; width: 300px; }
+        button { margin-top: 20px; padding: 10px 20px; }
+        textarea { width: 100%; height: 300px; margin-top: 20px; }
+    </style>
+    <script>
+        function toggleFields() {
+            let endpoint = document.getElementById("endpoint").value;
+
+            document.getElementById("id_field").style.display = (endpoint === "entity_id") ? "block" : "none";
+            document.getElementById("include_field").style.display = (endpoint === "entity_id") ? "block" : "none";
+
+            document.getElementById("search_fields").style.display = (endpoint.startsWith("entity_search")) ? "block" : "none";
+
+            document.getElementById("autocode_fields").style.display = (endpoint === "entity_autocode") ? "block" : "none";
+        }
+    </script>
+</head>
+<body>
+    <h1>WHO ICD API</h1>
+    <form method="post">
+        <label for="endpoint">Select Endpoint:</label>
+        <select id="endpoint" name="endpoint" onchange="toggleFields()" required>
+            <option value="entity">/icd/entity (GET)</option>
+            <option value="entity_id">/icd/entity/{id} (GET)</option>
+            <option value="entity_search_get">/icd/entity/search (GET)</option>
+            <option value="entity_search_post">/icd/entity/search (POST)</option>
+            <option value="entity_autocode">/icd/entity/autocode (GET)</option>
+        </select>
+
+        <div id="id_field" style="display:none;">
+            <label for="id">ID:</label>
+            <input type="text" name="id" placeholder="e.g. 448895267" />
+        </div>
+
+        <div id="include_field" style="display:none;">
+            <label for="include">Include:</label>
+            <input type="text" name="include" placeholder="e.g. ancestor,descendant" />
+        </div>
+
+        <label for="releaseId">Release ID (optional):</label>
+        <input type="text" name="releaseId" placeholder="e.g. 2019-04" />
+
+        <div id="search_fields" style="display:none;">
+            <label for="q">Search Query (q):</label>
+            <input type="text" name="q" placeholder="Enter search text" />
+
+            <label for="subtreesFilter">Subtrees Filter:</label>
+            <input type="text" name="subtreesFilter" placeholder="e.g. URI1,URI2" />
+
+            <label for="chapterFilter">Chapter Filter:</label>
+            <input type="text" name="chapterFilter" placeholder="e.g. 01;02" />
+
+            <label for="useFlexisearch">Use Flexisearch:</label>
+            <select name="useFlexisearch">
+                <option value="false">false</option>
+                <option value="true">true</option>
+            </select>
+
+            <label for="flatResults">Flat Results:</label>
+            <select name="flatResults">
+                <option value="true" selected>true</option>
+                <option value="false">false</option>
+            </select>
+
+            <label for="propertiesToBeSearched">Properties To Be Searched:</label>
+            <input type="text" name="propertiesToBeSearched" placeholder="e.g. Title,Definition" />
+
+            <label for="highlightingEnabled">Highlighting Enabled:</label>
+            <select name="highlightingEnabled">
+                <option value="true" selected>true</option>
+                <option value="false">false</option>
+            </select>
+        </div>
+
+        <div id="autocode_fields" style="display:none;">
+            <label for="searchText">Search Text:</label>
+            <input type="text" name="searchText" placeholder="Enter search text" />
+
+            <label for="subtreesFilter">Subtrees Filter:</label>
+            <input type="text" name="subtreesFilter" placeholder="e.g. URI1,URI2" />
+
+            <label for="releaseId">Release ID (optional):</label>
+            <input type="text" name="releaseId" placeholder="e.g. 2019-04" />
+
+            <label for="matchThreshold">Match Threshold:</label>
+            <input type="number" name="matchThreshold" step="0.01" min="0" max="1" placeholder="Between 0 and 1" />
+        </div>
+
+        <label for="api_version">API Version:</label>
+        <input type="text" name="api_version" value="v2" required />
+
+        <label for="accept_language">Accept Language:</label>
+        <input type="text" name="accept_language" value="en" required />
+
+        <button type="submit">Execute</button>
+    </form>
+
+    {% if response_data %}
+    <h2>API Response:</h2>
+    <textarea readonly>{{ response_data | tojson(indent=2) }}</textarea>
+    {% endif %}
+</body>
+</html>
